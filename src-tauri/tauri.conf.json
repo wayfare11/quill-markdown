@@ -10,21 +10,30 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "windows": [{
-      "title": "Quill",
-      "width": 1160,
-      "height": 800,
-      "minWidth": 720,
-      "minHeight": 500,
-      "resizable": true,
-      "fullscreen": false,
-      "center": true
-    }],
-    "security": { "csp": null }
+    "windows": [
+      {
+        "title": "Quill",
+        "width": 1160,
+        "height": 800,
+        "minWidth": 720,
+        "minHeight": 500,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
   },
   "bundle": {
     "active": true,
     "targets": ["nsis", "msi"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/icon.ico"
+    ],
     "shortDescription": "A quiet, local-first Markdown editor.",
     "longDescription": "Quill is an open-source local-first Markdown editor for Windows, focused on a Typora-like writing experience, raw Markdown source integrity, and a future extensible architecture.",
     "copyright": "Copyright (c) 2026 Quill Contributors"

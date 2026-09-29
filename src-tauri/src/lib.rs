@@ -28,7 +28,8 @@ fn write_text_file(path: String, content: String) -> Result<(), String> {
     let temp = sibling_path(target, "quill.tmp")?;
     {
         let mut file = File::create(&temp).map_err(|error| error.to_string())?;
-        file.write_all(content.as_bytes()).map_err(|error| error.to_string())?;
+        file.write_all(content.as_bytes())
+            .map_err(|error| error.to_string())?;
         file.sync_all().map_err(|error| error.to_string())?;
     }
 
@@ -44,11 +45,14 @@ fn write_text_file(path: String, content: String) -> Result<(), String> {
             if backup.exists() {
                 fs::remove_file(&backup).map_err(|error| error.to_string())?;
             }
+
             fs::rename(target, &backup).map_err(|error| error.to_string())?;
+
             if let Err(error) = fs::rename(&temp, target) {
                 let _ = fs::rename(&backup, target);
                 return Err(error.to_string());
             }
+
             let _ = fs::remove_file(&backup);
         } else {
             fs::rename(&temp, target).map_err(|error| error.to_string())?;

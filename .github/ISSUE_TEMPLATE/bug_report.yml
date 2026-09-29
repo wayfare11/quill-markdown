@@ -1,0 +1,54 @@
+name: Bug report
+description: Report a reproducible Quill problem
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: markdown
+    attributes:
+      label: Minimal Markdown example
+      description: Paste the smallest Markdown snippet that reproduces the issue, if applicable.
+      render: markdown
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open...
+        2. Move cursor...
+        3. Press...
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Editor mode
+      options:
+        - Live Preview
+        - Source
+        - Both
+        - Not applicable
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Quill version
+      placeholder: 0.1.0
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 24H2 x64
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Include IME/language details when the problem involves text input.

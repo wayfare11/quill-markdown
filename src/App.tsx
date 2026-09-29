@@ -79,6 +79,7 @@ function loadSettings(): PersistedSettings {
   if (typeof window === "undefined") {
     return { theme: "light", typography: DEFAULT_TYPOGRAPHY };
   }
+
   try {
     const raw = window.localStorage.getItem(SETTINGS_KEY);
     if (!raw) return { theme: "light", typography: DEFAULT_TYPOGRAPHY };
@@ -106,13 +107,14 @@ export default function App() {
   const [typography, setTypography] = useState<TypographySettings>(initialSettings.typography);
 
   const documentStyle = useMemo(
-    () => ({
-      "--quill-font-body": typography.bodyFont,
-      "--quill-font-code": typography.codeFont,
-      "--quill-font-size": `${typography.fontSize}px`,
-      "--quill-line-height": typography.lineHeight,
-      "--quill-document-width": `${typography.documentWidth}px`,
-    }) as CSSProperties,
+    () =>
+      ({
+        "--quill-font-body": typography.bodyFont,
+        "--quill-font-code": typography.codeFont,
+        "--quill-font-size": `${typography.fontSize}px`,
+        "--quill-line-height": typography.lineHeight,
+        "--quill-document-width": `${typography.documentWidth}px`,
+      }) as CSSProperties,
     [typography],
   );
 
@@ -197,6 +199,7 @@ export default function App() {
         }
         return;
       }
+
       const key = event.key.toLowerCase();
       if (key === "s") {
         event.preventDefault();
@@ -216,6 +219,7 @@ export default function App() {
         setMode((value) => (value === "live" ? "source" : "live"));
       }
     };
+
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   });
@@ -227,19 +231,51 @@ export default function App() {
           <span className="brand-mark">Q</span>
           <strong>Quill</strong>
         </div>
+
         <div className="document-title" title={path ?? "未保存文档"}>
           {dirty ? "* " : ""}{basename(path)}
         </div>
+
         <div className="top-actions">
           <div className="mode-switch" aria-label="编辑模式">
-            <button type="button" className={mode === "live" ? "active" : ""} onClick={() => setMode("live")}>Live</button>
-            <button type="button" className={mode === "source" ? "active" : ""} onClick={() => setMode("source")} title="源码模式 (Ctrl+Shift+M)">Source</button>
+            <button
+              type="button"
+              className={mode === "live" ? "active" : ""}
+              onClick={() => setMode("live")}
+              title="Live Preview"
+            >
+              Live
+            </button>
+            <button
+              type="button"
+              className={mode === "source" ? "active" : ""}
+              onClick={() => setMode("source")}
+              title="源码模式 (Ctrl+Shift+M)"
+            >
+              Source
+            </button>
           </div>
-          <button type="button" className="icon-button" onClick={() => setTheme((value) => value === "light" ? "dark" : "light")} title="切换明暗主题">
+
+          <button
+            type="button"
+            className="icon-button"
+            onClick={() => setTheme((value) => (value === "light" ? "dark" : "light"))}
+            title="切换明暗主题"
+            aria-label="切换明暗主题"
+          >
             {theme === "light" ? "Moon" : "Sun"}
           </button>
+
           <div className="menu-anchor">
-            <button type="button" className="icon-button more-button" onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen}>...</button>
+            <button
+              type="button"
+              className="icon-button more-button"
+              onClick={() => setMenuOpen((value) => !value)}
+              aria-expanded={menuOpen}
+              aria-label="更多操作"
+            >
+              ...
+            </button>
             {menuOpen && (
               <div className="file-menu">
                 <button type="button" onClick={handleNew}><span>新建</span><kbd>Ctrl N</kbd></button>
@@ -247,7 +283,13 @@ export default function App() {
                 <button type="button" onClick={() => void handleSave(false)}><span>保存</span><kbd>Ctrl S</kbd></button>
                 <button type="button" onClick={() => void handleSave(true)}><span>另存为...</span><kbd>Ctrl Shift S</kbd></button>
                 <div className="menu-separator" />
-                <button type="button" onClick={() => { setMenuOpen(false); setSettingsOpen(true); }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setSettingsOpen(true);
+                  }}
+                >
                   <span>排版设置</span><kbd>Ctrl ,</kbd>
                 </button>
               </div>
@@ -262,7 +304,10 @@ export default function App() {
             ref={editorRef}
             initialValue={SAMPLE}
             mode={mode}
-            onDirty={() => { setDirty(true); setStatus("编辑中"); }}
+            onDirty={() => {
+              setDirty(true);
+              setStatus("编辑中");
+            }}
             onStats={setStats}
           />
         </section>
@@ -270,37 +315,92 @@ export default function App() {
         {settingsOpen && (
           <aside className="settings-panel" onClick={(event) => event.stopPropagation()}>
             <div className="settings-header">
-              <div><strong>排版</strong><small>仅改变显示，不修改 Markdown 原文</small></div>
-              <button type="button" className="close-button" onClick={() => setSettingsOpen(false)}>Close</button>
+              <div>
+                <strong>排版</strong>
+                <small>仅改变显示，不修改 Markdown 原文</small>
+              </div>
+              <button type="button" className="close-button" onClick={() => setSettingsOpen(false)}>
+                Close
+              </button>
             </div>
+
             <label>
               <span>正文字体</span>
-              <select value={typography.bodyFont} onChange={(event) => setTypography((value) => ({ ...value, bodyFont: event.target.value }))}>
-                {FONT_OPTIONS.map((font) => <option key={font.label} value={font.value}>{font.label}</option>)}
+              <select
+                value={typography.bodyFont}
+                onChange={(event) =>
+                  setTypography((value) => ({ ...value, bodyFont: event.target.value }))
+                }
+              >
+                {FONT_OPTIONS.map((font) => (
+                  <option key={font.label} value={font.value}>{font.label}</option>
+                ))}
               </select>
             </label>
+
             <label>
               <span>代码字体</span>
-              <select value={typography.codeFont} onChange={(event) => setTypography((value) => ({ ...value, codeFont: event.target.value }))}>
-                {CODE_FONT_OPTIONS.map((font) => <option key={font.label} value={font.value}>{font.label}</option>)}
+              <select
+                value={typography.codeFont}
+                onChange={(event) =>
+                  setTypography((value) => ({ ...value, codeFont: event.target.value }))
+                }
+              >
+                {CODE_FONT_OPTIONS.map((font) => (
+                  <option key={font.label} value={font.value}>{font.label}</option>
+                ))}
               </select>
             </label>
+
             <label>
               <span>正文字号 <b>{typography.fontSize}px</b></span>
-              <input type="range" min="13" max="22" step="1" value={typography.fontSize}
-                onChange={(event) => setTypography((value) => ({ ...value, fontSize: Number(event.target.value) }))} />
+              <input
+                type="range"
+                min="13"
+                max="22"
+                step="1"
+                value={typography.fontSize}
+                onChange={(event) =>
+                  setTypography((value) => ({ ...value, fontSize: Number(event.target.value) }))
+                }
+              />
             </label>
+
             <label>
               <span>行距 <b>{typography.lineHeight.toFixed(2)}</b></span>
-              <input type="range" min="1.3" max="2.2" step="0.05" value={typography.lineHeight}
-                onChange={(event) => setTypography((value) => ({ ...value, lineHeight: Number(event.target.value) }))} />
+              <input
+                type="range"
+                min="1.3"
+                max="2.2"
+                step="0.05"
+                value={typography.lineHeight}
+                onChange={(event) =>
+                  setTypography((value) => ({ ...value, lineHeight: Number(event.target.value) }))
+                }
+              />
             </label>
+
             <label>
               <span>正文宽度 <b>{typography.documentWidth}px</b></span>
-              <input type="range" min="560" max="1040" step="20" value={typography.documentWidth}
-                onChange={(event) => setTypography((value) => ({ ...value, documentWidth: Number(event.target.value) }))} />
+              <input
+                type="range"
+                min="560"
+                max="1040"
+                step="20"
+                value={typography.documentWidth}
+                onChange={(event) =>
+                  setTypography((value) => ({ ...value, documentWidth: Number(event.target.value) }))
+                }
+              />
             </label>
-            <button type="button" className="secondary-button" onClick={() => setTypography(DEFAULT_TYPOGRAPHY)}>恢复默认排版</button>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => setTypography(DEFAULT_TYPOGRAPHY)}
+            >
+              恢复默认排版
+            </button>
           </aside>
         )}
       </main>
